@@ -1,0 +1,11 @@
+# 父域折叠：默认开启；命令行 --fold / --no-fold 只覆盖当次运行
+fold: true
+
+# 下载并发数与单请求超时（秒）、失败重试次数
+concurrency: 4
+timeout: 30
+retries: 3
+
+# 哨兵：任一产物条数低于上一版的该比例即判构建失败，禁止发布
+sentinel:
+  min_retain_ratio: 0.8

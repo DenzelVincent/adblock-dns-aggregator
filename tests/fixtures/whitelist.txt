@@ -1,0 +1,2 @@
+# fixture: 手工放行
+track.example.com

@@ -1,0 +1,4 @@
+# fixture: 仅 full 档 plain 源
+fullonly.example.com
+tracker.example.org
+0.0.0.0 sub.fullonly.example.com

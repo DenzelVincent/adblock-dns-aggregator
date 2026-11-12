@@ -1,0 +1,2 @@
+# 全部文本文件强制 LF，避免 Windows 侧提交把 CRLF 写进产物和源文件
+* text=auto eol=lf

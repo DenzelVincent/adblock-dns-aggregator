@@ -1,0 +1,4 @@
+# fixture: mosdns 前缀格式
+domain:mosdns.example.net
+domain:sub.mosdns.example.net
+full:not-counted.example.net

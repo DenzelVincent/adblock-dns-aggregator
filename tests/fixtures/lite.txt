@@ -1,0 +1,6 @@
+[Adblock Plus]
+! fixture: lite 档 adguard 源
+||ads.example.com^
+||deep.ads.example.com^
+||track.example.com^
+@@||good.example.com^

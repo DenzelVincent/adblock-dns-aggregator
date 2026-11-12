@@ -1,0 +1,87 @@
+name: build
+
+on:
+  schedule:
+    # 每日 20:00 UTC（北京 04:00）
+    - cron: "0 20 * * *"
+  workflow_dispatch:
+    inputs:
+      fold:
+        description: "父域折叠（default 读 config.yaml）"
+        type: choice
+        options: [default, on, off]
+        default: default
+  push:
+    paths:
+      - sources.yaml
+      - whitelist.txt
+      - config.yaml
+      - aggregator/**
+      - tests/**
+      - .github/workflows/build.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 安装依赖
+        run: pip install -r requirements.txt pytest
+
+      - name: 单元测试
+        run: python -m pytest -q
+
+      - name: 取上一版 manifest
+        run: |
+          mkdir -p "$RUNNER_TEMP/previous"
+          if git ls-remote --exit-code --heads origin output > /dev/null; then
+            git fetch --depth=1 origin output
+            git show origin/output:manifest.json > "$RUNNER_TEMP/previous/manifest.json"
+          else
+            echo "output 分支尚不存在，跳过哨兵基线"
+          fi
+
+      - name: 构建产物
+        env:
+          FOLD_INPUT: ${{ inputs.fold || 'default' }}
+        run: |
+          FOLD=""
+          if [ "$FOLD_INPUT" = "on" ]; then FOLD="--fold"; fi
+          if [ "$FOLD_INPUT" = "off" ]; then FOLD="--no-fold"; fi
+          python -m aggregator --out dist --previous-manifest "$RUNNER_TEMP/previous/manifest.json" $FOLD
+
+      - name: 写入 Step Summary
+        if: always()
+        run: |
+          if [ -f dist/manifest.json ]; then
+            python -m aggregator.report dist/manifest.json >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: 发布到 output 分支
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p "$RUNNER_TEMP/publish"
+          cp -a dist/. "$RUNNER_TEMP/publish/"
+          rm -rf dist
+          git checkout --orphan output
+          git rm -rf .
+          cp -a "$RUNNER_TEMP/publish/." .
+          git add -A
+          git commit -m "chore: 规则构建 $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push --force origin output

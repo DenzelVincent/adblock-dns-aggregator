@@ -1,0 +1,6 @@
+fold: true
+concurrency: 2
+timeout: 10
+retries: 1
+sentinel:
+  min_retain_ratio: 0.8

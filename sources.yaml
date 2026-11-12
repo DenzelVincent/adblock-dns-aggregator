@@ -1,0 +1,38 @@
+# 源清单：唯一的源事实来源。
+# license 为必填项，构建时会校验；不接受无法再分发的源（如 CC-BY-NC）。
+# tiers: lite 档收录含 lite 的源，full 档收录所有 enabled 源。
+
+- name: anti-AD
+  url: https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-domains.txt
+  format: plain
+  tiers: [lite, full]
+  license: MIT
+  enabled: true
+
+- name: AWAvenue-Ads-Rule
+  url: https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/AWAvenue-Ads-Rule.txt
+  format: adguard
+  tiers: [lite, full]
+  license: GPL-3.0
+  enabled: true
+
+- name: hagezi-light
+  url: https://raw.githubusercontent.com/hagezi/dns-blocklists/main/adblock/light.txt
+  format: adguard
+  tiers: [lite, full]
+  license: GPL-3.0
+  enabled: true
+
+- name: hagezi-pro
+  url: https://raw.githubusercontent.com/hagezi/dns-blocklists/main/adblock/pro.txt
+  format: adguard
+  tiers: [full]
+  license: GPL-3.0
+  enabled: true
+
+- name: Cats-Team-AdRules
+  url: https://raw.githubusercontent.com/Cats-Team/AdRules/main/mosdns_adrules.txt
+  format: mosdns
+  tiers: [full]
+  license: 0BSD
+  enabled: true
