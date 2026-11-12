@@ -14,15 +14,19 @@ OUTPUT_FILES = {
     "mosdns-lite.txt",
     "mosdns-full.txt",
     "mosdns-cn.txt",
+    "mosdns-mini.txt",
     "adguard-lite.txt",
     "adguard-full.txt",
     "adguard-cn.txt",
+    "adguard-mini.txt",
     "dnsmasq-lite.conf",
     "dnsmasq-full.conf",
     "dnsmasq-cn.conf",
+    "dnsmasq-mini.conf",
     "smartdns-lite.conf",
     "smartdns-full.conf",
     "smartdns-cn.conf",
+    "smartdns-mini.conf",
     "manifest.json",
 }
 
@@ -32,7 +36,7 @@ def write_sources(tmp_path, include_broken=False):
 - name: lite-source
   url: {(FIXTURES / "lite.txt").as_uri()}
   format: adguard
-  tiers: [lite, full, cn]
+  tiers: [lite, full, cn, mini]
   license: MIT
   enabled: true
 - name: full-source
@@ -51,6 +55,12 @@ def write_sources(tmp_path, include_broken=False):
   url: {(FIXTURES / "cn.txt").as_uri()}
   format: plain
   tiers: [cn]
+  license: MIT
+  enabled: true
+- name: mini-source
+  url: {(FIXTURES / "mini.txt").as_uri()}
+  format: plain
+  tiers: [mini]
   license: MIT
   enabled: true
 """
@@ -95,6 +105,7 @@ def test_pipeline_outputs_and_manifest(tmp_path):
         "||ads.example.com^",
         "||fullonly.example.com^",
         "||cn.example.net^",
+        "||mini.example.net^",
         "||mosdns.example.net^",
         "||tracker.example.org^",
     ]
@@ -108,19 +119,22 @@ def test_pipeline_outputs_and_manifest(tmp_path):
         "full-source",
         "mosdns-source",
         "cn-source",
+        "mini-source",
     ]
     assert {s["name"]: s["entries"] for s in manifest["sources"]} == {
         "lite-source": 3,
         "full-source": 3,
         "mosdns-source": 2,
         "cn-source": 1,
+        "mini-source": 1,
     }
     assert all(s["status"] == "ok" for s in manifest["sources"])
     assert all(len(s["sha256"]) == 64 for s in manifest["sources"])
     counts = {o["file"]: o["count"] for o in manifest["outputs"]}
     assert counts["mosdns-lite.txt"] == 1
-    assert counts["mosdns-full.txt"] == 5
+    assert counts["mosdns-full.txt"] == 6
     assert counts["mosdns-cn.txt"] == 2
+    assert counts["mosdns-mini.txt"] == 2
     assert all(o["previous"] is None for o in manifest["outputs"])
 
 
@@ -129,24 +143,31 @@ def test_tier_header_lists_only_sources_of_that_tier(tmp_path):
     lite_header = (out_dir / "mosdns-lite.txt").read_text(encoding="utf-8").splitlines()[2]
     full_header = (out_dir / "mosdns-full.txt").read_text(encoding="utf-8").splitlines()[2]
     cn_header = (out_dir / "mosdns-cn.txt").read_text(encoding="utf-8").splitlines()[2]
+    mini_header = (out_dir / "mosdns-mini.txt").read_text(encoding="utf-8").splitlines()[2]
     assert "lite-source" in lite_header
     assert "full-source" not in lite_header
     assert "mosdns-source" not in lite_header
     assert "cn-source" not in lite_header
+    assert "mini-source" not in lite_header
     assert "full-source" in full_header
     assert "mosdns-source" in full_header
     assert "lite-source" in cn_header
     assert "cn-source" in cn_header
     assert "full-source" not in cn_header
     assert "mosdns-source" not in cn_header
+    assert "lite-source" in mini_header
+    assert "mini-source" in mini_header
+    assert "cn-source" not in mini_header
+    assert "full-source" not in mini_header
 
 
 def test_pipeline_with_fold_off(tmp_path):
     out_dir, manifest = run_once(tmp_path, fold=False)
     counts = {o["file"]: o["count"] for o in manifest["outputs"]}
     assert counts["mosdns-lite.txt"] == 2
-    assert counts["mosdns-full.txt"] == 8
+    assert counts["mosdns-full.txt"] == 9
     assert counts["mosdns-cn.txt"] == 3
+    assert counts["mosdns-mini.txt"] == 3
     assert manifest["fold"] is False
     assert "deep.ads.example.com" in body(out_dir / "mosdns-lite.txt")
     assert "track.example.com" not in body(out_dir / "mosdns-lite.txt")

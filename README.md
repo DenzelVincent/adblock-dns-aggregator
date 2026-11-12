@@ -1,6 +1,6 @@
 # adblock-dns-aggregator
 
-从一手规则源聚合广告/追踪域名，产出 mosdns、AdGuard、dnsmasq、smartdns 四种格式的 lite / full / cn 三档清单，每日由 GitHub Actions 构建并发布到 `output` 分支。
+从一手规则源聚合广告/追踪域名，产出 mosdns、AdGuard、dnsmasq、smartdns 四种格式的 lite / full / cn / mini 四档清单，每日由 GitHub Actions 构建并发布到 `output` 分支。
 
 ## 它解决什么
 
@@ -16,17 +16,18 @@
 
 | 文件 | 格式 |
 |---|---|
-| `mosdns-lite.txt` / `mosdns-full.txt` / `mosdns-cn.txt` | 纯域名，一行一个 |
-| `adguard-lite.txt` / `adguard-full.txt` / `adguard-cn.txt` | `\|\|domain^` |
-| `dnsmasq-lite.conf` / `dnsmasq-full.conf` / `dnsmasq-cn.conf` | `address=/domain/0.0.0.0` |
-| `smartdns-lite.conf` / `smartdns-full.conf` / `smartdns-cn.conf` | `address /domain/#` |
+| `mosdns-{mini,cn,lite,full}.txt` | 纯域名，一行一个 |
+| `adguard-{mini,cn,lite,full}.txt` | `\|\|domain^` |
+| `dnsmasq-{mini,cn,lite,full}.conf` | `address=/domain/0.0.0.0` |
+| `smartdns-{mini,cn,lite,full}.conf` | `address /domain/#` |
 | `manifest.json` | 生成时间、各源状态与条数、折叠前后条数、sha256 |
 
-档位含义：
+档位含义（按条数从小到大）：
 
-- `lite`：中文主力源 + HaGeZi Light，约 15.6 万条；
-- `full`：全部启用源，约 34.9 万条；
-- `cn`：只含国内源（anti-AD + AWAvenue），约 10.2 万条，供国内用户单独订阅。
+- `mini`：AdGuard 中文过滤 + AWAvenue，约 6,800 条，只覆盖主流中文广告，内存紧张时用；
+- `cn`：anti-AD + AWAvenue，约 10.2 万条，覆盖国内主流与长尾广告；
+- `lite`：cn + HaGeZi Light，约 15.6 万条，再加全球追踪/遥测；
+- `full`：全部启用源，约 34.9 万条。
 
 国内/国外按**源**划分而不是逐个域名判定：广告域名多挂在 `.com` 或 CDN 下，用 TLD 或社区中国域名表归类误差很大；源级拆分是近似，但可解释、可维护。`cn` 档里仍会混有少量国外广告域名。
 
@@ -42,6 +43,9 @@ https://raw.githubusercontent.com/DenzelVincent/adblock-dns-aggregator/output/mo
 
 # 国内用户只订国内源
 https://raw.githubusercontent.com/DenzelVincent/adblock-dns-aggregator/output/mosdns-cn.txt
+
+# 内存紧张时用 mini 档
+https://raw.githubusercontent.com/DenzelVincent/adblock-dns-aggregator/output/mosdns-mini.txt
 
 # 走 gh-proxy 时在地址前加 https://gh-proxy.com/
 ```
@@ -65,7 +69,8 @@ https://raw.githubusercontent.com/DenzelVincent/adblock-dns-aggregator/output/mo
 | 源 | 仓库 | 许可证 | 格式 | 档位 |
 |---|---|---|---|---|
 | anti-AD | [privacy-protection-tools/anti-AD](https://github.com/privacy-protection-tools/anti-AD) | MIT | plain | lite, full, cn |
-| AWAvenue-Ads-Rule | [TG-Twilight/AWAvenue-Ads-Rule](https://github.com/TG-Twilight/AWAvenue-Ads-Rule) | GPL-3.0 | adguard | lite, full, cn |
+| AWAvenue-Ads-Rule | [TG-Twilight/AWAvenue-Ads-Rule](https://github.com/TG-Twilight/AWAvenue-Ads-Rule) | GPL-3.0 | adguard | lite, full, cn, mini |
+| AdGuard-Chinese | [AdguardTeam/AdguardFilters](https://github.com/AdguardTeam/AdguardFilters) | GPL-3.0 | adguard | mini |
 | hagezi-light | [hagezi/dns-blocklists](https://github.com/hagezi/dns-blocklists) | GPL-3.0 | adguard | lite, full |
 | hagezi-pro | [hagezi/dns-blocklists](https://github.com/hagezi/dns-blocklists) | GPL-3.0 | adguard | full |
 | Cats-Team-AdRules | [Cats-Team/AdRules](https://github.com/Cats-Team/AdRules) | 0BSD | mosdns | full |

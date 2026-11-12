@@ -51,7 +51,7 @@ def run(
         raise RuntimeError("所有源均下载失败，拒绝产出空清单")
 
     exclude = set(whitelist)
-    include_by_tier = {"lite": set(), "full": set(), "cn": set()}
+    include_by_tier = {"lite": set(), "full": set(), "cn": set(), "mini": set()}
     source_records: list[dict] = []
 
     for source, result in zip(sources, results):

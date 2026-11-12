@@ -38,29 +38,25 @@ def test_render_is_byte_stable():
     assert render(*args) == render(*args)
 
 
-def test_write_all_creates_twelve_files(tmp_path):
+def test_write_all_creates_sixteen_files(tmp_path):
     tiers = {
         "lite": ["example.com"],
         "full": ["example.com", "extra.example.org"],
         "cn": ["cn.example.net"],
+        "mini": ["mini.example.net"],
     }
-    outputs = write_all(
-        tmp_path, tiers, GENERATED_AT, True, {"lite": SOURCES, "full": SOURCES, "cn": SOURCES}
-    )
+    summaries = {tier: SOURCES for tier in tiers}
+    outputs = write_all(tmp_path, tiers, GENERATED_AT, True, summaries)
 
     expected = {
-        "mosdns-lite.txt",
-        "mosdns-full.txt",
-        "mosdns-cn.txt",
-        "adguard-lite.txt",
-        "adguard-full.txt",
-        "adguard-cn.txt",
-        "dnsmasq-lite.conf",
-        "dnsmasq-full.conf",
-        "dnsmasq-cn.conf",
-        "smartdns-lite.conf",
-        "smartdns-full.conf",
-        "smartdns-cn.conf",
+        f"{fmt}-{tier}.{ext}"
+        for fmt, ext in (
+            ("mosdns", "txt"),
+            ("adguard", "txt"),
+            ("dnsmasq", "conf"),
+            ("smartdns", "conf"),
+        )
+        for tier in tiers
     }
     assert {p.name for p in tmp_path.iterdir()} == expected
     assert [o["file"] for o in outputs] == [
@@ -76,19 +72,24 @@ def test_write_all_creates_twelve_files(tmp_path):
         "adguard-cn.txt",
         "dnsmasq-cn.conf",
         "smartdns-cn.conf",
+        "mosdns-mini.txt",
+        "adguard-mini.txt",
+        "dnsmasq-mini.conf",
+        "smartdns-mini.conf",
     ]
     assert outputs[0]["count"] == 1
     assert outputs[4]["count"] == 2
     assert outputs[8]["count"] == 1
+    assert outputs[12]["count"] == 1
 
 
 def test_written_files_use_lf_only(tmp_path):
     write_all(
         tmp_path,
-        {"lite": ["example.com"], "full": [], "cn": []},
+        {"lite": ["example.com"], "full": [], "cn": [], "mini": []},
         GENERATED_AT,
         True,
-        {"lite": SOURCES, "full": SOURCES, "cn": SOURCES},
+        {"lite": SOURCES, "full": SOURCES, "cn": SOURCES, "mini": SOURCES},
     )
     for path in tmp_path.iterdir():
         if path.suffix != ".json":

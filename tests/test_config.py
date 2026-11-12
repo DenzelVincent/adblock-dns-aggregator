@@ -70,10 +70,11 @@ def test_unknown_tier_is_rejected(tmp_path):
         load_sources(write(tmp_path, "sources.yaml", text))
 
 
-def test_cn_tier_is_accepted(tmp_path):
-    text = VALID_SOURCES.replace("[lite, full]", "[lite, full, cn]")
+def test_optional_tiers_are_accepted(tmp_path):
+    text = VALID_SOURCES.replace("[lite, full]", "[lite, full, cn, mini]")
     sources = load_sources(write(tmp_path, "sources.yaml", text))
     assert "cn" in sources[0].tiers
+    assert "mini" in sources[0].tiers
 
 
 def test_duplicate_source_names_rejected(tmp_path):

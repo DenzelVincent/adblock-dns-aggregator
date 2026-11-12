@@ -1,7 +1,8 @@
 # 源清单：唯一的源事实来源。
 # license 为必填项，构建时会校验；不接受无法再分发的源（如 CC-BY-NC）。
 # tiers: lite 档收录含 lite 的源；full 档收录所有 enabled 源；
-#        cn 档收录含 cn 的源（国内源，供国内用户单独订阅）。
+#        cn 档收录含 cn 的源（国内源，供国内用户单独订阅）；
+#        mini 档收录含 mini 的源（精编主流中文源，内存紧张时用）。
 
 - name: anti-AD
   url: https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-domains.txt
@@ -13,7 +14,14 @@
 - name: AWAvenue-Ads-Rule
   url: https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/AWAvenue-Ads-Rule.txt
   format: adguard
-  tiers: [lite, full, cn]
+  tiers: [lite, full, cn, mini]
+  license: GPL-3.0
+  enabled: true
+
+- name: AdGuard-Chinese
+  url: https://filters.adtidy.org/extension/chromium/filters/224.txt
+  format: adguard
+  tiers: [mini]
   license: GPL-3.0
   enabled: true
 

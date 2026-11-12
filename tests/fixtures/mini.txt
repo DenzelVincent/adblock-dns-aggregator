@@ -1,0 +1,2 @@
+# fixture: 仅 mini 档 plain 源
+mini.example.net

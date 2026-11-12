@@ -9,7 +9,7 @@ import yaml
 
 from .parse import FORMATS, normalize_domain
 
-TIERS = ("lite", "full", "cn")
+TIERS = ("lite", "full", "cn", "mini")
 
 
 class ConfigError(Exception):
