@@ -38,19 +38,29 @@ def test_render_is_byte_stable():
     assert render(*args) == render(*args)
 
 
-def test_write_all_creates_eight_files(tmp_path):
-    tiers = {"lite": ["example.com"], "full": ["example.com", "extra.example.org"]}
-    outputs = write_all(tmp_path, tiers, GENERATED_AT, True, {"lite": SOURCES, "full": SOURCES})
+def test_write_all_creates_twelve_files(tmp_path):
+    tiers = {
+        "lite": ["example.com"],
+        "full": ["example.com", "extra.example.org"],
+        "cn": ["cn.example.net"],
+    }
+    outputs = write_all(
+        tmp_path, tiers, GENERATED_AT, True, {"lite": SOURCES, "full": SOURCES, "cn": SOURCES}
+    )
 
     expected = {
         "mosdns-lite.txt",
         "mosdns-full.txt",
+        "mosdns-cn.txt",
         "adguard-lite.txt",
         "adguard-full.txt",
+        "adguard-cn.txt",
         "dnsmasq-lite.conf",
         "dnsmasq-full.conf",
+        "dnsmasq-cn.conf",
         "smartdns-lite.conf",
         "smartdns-full.conf",
+        "smartdns-cn.conf",
     }
     assert {p.name for p in tmp_path.iterdir()} == expected
     assert [o["file"] for o in outputs] == [
@@ -62,18 +72,23 @@ def test_write_all_creates_eight_files(tmp_path):
         "adguard-full.txt",
         "dnsmasq-full.conf",
         "smartdns-full.conf",
+        "mosdns-cn.txt",
+        "adguard-cn.txt",
+        "dnsmasq-cn.conf",
+        "smartdns-cn.conf",
     ]
     assert outputs[0]["count"] == 1
     assert outputs[4]["count"] == 2
+    assert outputs[8]["count"] == 1
 
 
 def test_written_files_use_lf_only(tmp_path):
     write_all(
         tmp_path,
-        {"lite": ["example.com"], "full": []},
+        {"lite": ["example.com"], "full": [], "cn": []},
         GENERATED_AT,
         True,
-        {"lite": SOURCES, "full": SOURCES},
+        {"lite": SOURCES, "full": SOURCES, "cn": SOURCES},
     )
     for path in tmp_path.iterdir():
         if path.suffix != ".json":

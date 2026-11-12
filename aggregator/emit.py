@@ -41,8 +41,7 @@ def write_all(
 ) -> list[dict]:
     out_dir.mkdir(parents=True, exist_ok=True)
     outputs: list[dict] = []
-    for tier in ("lite", "full"):
-        domains = tier_domains[tier]
+    for tier, domains in tier_domains.items():
         for fmt, (extension, _, _) in FORMATS.items():
             name = f"{fmt}-{tier}.{extension}"
             text = render(fmt, domains, tier, generated_at, fold, summaries[tier])

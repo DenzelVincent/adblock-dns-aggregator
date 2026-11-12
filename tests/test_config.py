@@ -70,6 +70,12 @@ def test_unknown_tier_is_rejected(tmp_path):
         load_sources(write(tmp_path, "sources.yaml", text))
 
 
+def test_cn_tier_is_accepted(tmp_path):
+    text = VALID_SOURCES.replace("[lite, full]", "[lite, full, cn]")
+    sources = load_sources(write(tmp_path, "sources.yaml", text))
+    assert "cn" in sources[0].tiers
+
+
 def test_duplicate_source_names_rejected(tmp_path):
     path = write(tmp_path, "sources.yaml", VALID_SOURCES + VALID_SOURCES)
     with pytest.raises(ConfigError, match="重复"):

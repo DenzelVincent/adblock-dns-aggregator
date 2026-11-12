@@ -51,8 +51,7 @@ def run(
         raise RuntimeError("所有源均下载失败，拒绝产出空清单")
 
     exclude = set(whitelist)
-    include_lite: set[str] = set()
-    include_full: set[str] = set()
+    include_by_tier = {"lite": set(), "full": set(), "cn": set()}
     source_records: list[dict] = []
 
     for source, result in zip(sources, results):
@@ -63,9 +62,9 @@ def run(
             include, source_exclude = parse_source(result.text, source.format)
             # 解析出 0 条与下载失败同权：多半是上游改了格式
             status = "empty" if not include else "ok"
-        if "lite" in source.tiers:
-            include_lite |= include
-        include_full |= include
+        for tier in include_by_tier:
+            if tier == "full" or tier in source.tiers:
+                include_by_tier[tier] |= include
         exclude |= source_exclude
 
         record = {
@@ -88,22 +87,22 @@ def run(
             len(source_exclude),
         )
 
-    if not include_full:
+    if not include_by_tier["full"]:
         raise RuntimeError("解析后拦截集为空，拒绝产出空清单")
 
     fold_enabled = config.fold if fold is None else fold
     generated = generated_at or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     tier_domains = {
-        "lite": resolve(include_lite, exclude, fold_enabled),
-        "full": resolve(include_full, exclude, fold_enabled),
+        tier: resolve(include, exclude, fold_enabled)
+        for tier, include in include_by_tier.items()
     }
 
-    def summary(lite_only: bool) -> str:
+    def summary(tier: str) -> str:
         return ", ".join(
             f"{record['name']} ({record['status']}, {record['entries']} 条)"
             for source, record in zip(sources, source_records)
-            if not lite_only or "lite" in source.tiers
+            if tier == "full" or tier in source.tiers
         )
 
     out_dir = Path(out_dir)
@@ -112,7 +111,7 @@ def run(
         tier_domains,
         generated,
         fold_enabled,
-        {"lite": summary(True), "full": summary(False)},
+        {tier: summary(tier) for tier in tier_domains},
     )
 
     previous_counts = _read_previous_counts(previous_manifest)
