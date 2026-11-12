@@ -11,22 +11,22 @@ WHITELIST = FIXTURES / "whitelist.txt"
 GENERATED_AT = "2026-11-12T20:00:00Z"
 
 OUTPUT_FILES = {
-    "mosdns-lite.txt",
-    "mosdns-full.txt",
-    "mosdns-cn.txt",
-    "mosdns-mini.txt",
-    "adguard-lite.txt",
-    "adguard-full.txt",
-    "adguard-cn.txt",
-    "adguard-mini.txt",
-    "dnsmasq-lite.conf",
-    "dnsmasq-full.conf",
-    "dnsmasq-cn.conf",
-    "dnsmasq-mini.conf",
-    "smartdns-lite.conf",
-    "smartdns-full.conf",
-    "smartdns-cn.conf",
-    "smartdns-mini.conf",
+    "mosdns/lite.txt",
+    "mosdns/full.txt",
+    "mosdns/cn.txt",
+    "mosdns/mini.txt",
+    "adguard/lite.txt",
+    "adguard/full.txt",
+    "adguard/cn.txt",
+    "adguard/mini.txt",
+    "dnsmasq/lite.conf",
+    "dnsmasq/full.conf",
+    "dnsmasq/cn.conf",
+    "dnsmasq/mini.conf",
+    "smartdns/lite.conf",
+    "smartdns/full.conf",
+    "smartdns/cn.conf",
+    "smartdns/mini.conf",
     "manifest.json",
 }
 
@@ -99,9 +99,14 @@ def body(path):
 def test_pipeline_outputs_and_manifest(tmp_path):
     out_dir, manifest = run_once(tmp_path)
 
-    assert {p.name for p in out_dir.iterdir()} == OUTPUT_FILES
-    assert body(out_dir / "mosdns-lite.txt") == ["ads.example.com"]
-    assert body(out_dir / "adguard-full.txt") == [
+    actual = {
+        path.relative_to(out_dir).as_posix()
+        for path in out_dir.rglob("*")
+        if path.is_file()
+    }
+    assert actual == OUTPUT_FILES
+    assert body(out_dir / "mosdns" / "lite.txt") == ["ads.example.com"]
+    assert body(out_dir / "adguard" / "full.txt") == [
         "||ads.example.com^",
         "||fullonly.example.com^",
         "||cn.example.net^",
@@ -109,8 +114,8 @@ def test_pipeline_outputs_and_manifest(tmp_path):
         "||mosdns.example.net^",
         "||tracker.example.org^",
     ]
-    assert body(out_dir / "dnsmasq-lite.conf") == ["address=/ads.example.com/0.0.0.0"]
-    assert body(out_dir / "smartdns-full.conf")[0] == "address /ads.example.com/#"
+    assert body(out_dir / "dnsmasq" / "lite.conf") == ["address=/ads.example.com/0.0.0.0"]
+    assert body(out_dir / "smartdns" / "full.conf")[0] == "address /ads.example.com/#"
 
     assert manifest["generated_at"] == GENERATED_AT
     assert manifest["fold"] is True
@@ -131,19 +136,19 @@ def test_pipeline_outputs_and_manifest(tmp_path):
     assert all(s["status"] == "ok" for s in manifest["sources"])
     assert all(len(s["sha256"]) == 64 for s in manifest["sources"])
     counts = {o["file"]: o["count"] for o in manifest["outputs"]}
-    assert counts["mosdns-lite.txt"] == 1
-    assert counts["mosdns-full.txt"] == 6
-    assert counts["mosdns-cn.txt"] == 2
-    assert counts["mosdns-mini.txt"] == 2
+    assert counts["mosdns/lite.txt"] == 1
+    assert counts["mosdns/full.txt"] == 6
+    assert counts["mosdns/cn.txt"] == 2
+    assert counts["mosdns/mini.txt"] == 2
     assert all(o["previous"] is None for o in manifest["outputs"])
 
 
 def test_tier_header_lists_only_sources_of_that_tier(tmp_path):
     out_dir, _ = run_once(tmp_path)
-    lite_header = (out_dir / "mosdns-lite.txt").read_text(encoding="utf-8").splitlines()[2]
-    full_header = (out_dir / "mosdns-full.txt").read_text(encoding="utf-8").splitlines()[2]
-    cn_header = (out_dir / "mosdns-cn.txt").read_text(encoding="utf-8").splitlines()[2]
-    mini_header = (out_dir / "mosdns-mini.txt").read_text(encoding="utf-8").splitlines()[2]
+    lite_header = (out_dir / "mosdns" / "lite.txt").read_text(encoding="utf-8").splitlines()[2]
+    full_header = (out_dir / "mosdns" / "full.txt").read_text(encoding="utf-8").splitlines()[2]
+    cn_header = (out_dir / "mosdns" / "cn.txt").read_text(encoding="utf-8").splitlines()[2]
+    mini_header = (out_dir / "mosdns" / "mini.txt").read_text(encoding="utf-8").splitlines()[2]
     assert "lite-source" in lite_header
     assert "full-source" not in lite_header
     assert "mosdns-source" not in lite_header
@@ -164,13 +169,13 @@ def test_tier_header_lists_only_sources_of_that_tier(tmp_path):
 def test_pipeline_with_fold_off(tmp_path):
     out_dir, manifest = run_once(tmp_path, fold=False)
     counts = {o["file"]: o["count"] for o in manifest["outputs"]}
-    assert counts["mosdns-lite.txt"] == 2
-    assert counts["mosdns-full.txt"] == 9
-    assert counts["mosdns-cn.txt"] == 3
-    assert counts["mosdns-mini.txt"] == 3
+    assert counts["mosdns/lite.txt"] == 2
+    assert counts["mosdns/full.txt"] == 9
+    assert counts["mosdns/cn.txt"] == 3
+    assert counts["mosdns/mini.txt"] == 3
     assert manifest["fold"] is False
-    assert "deep.ads.example.com" in body(out_dir / "mosdns-lite.txt")
-    assert "track.example.com" not in body(out_dir / "mosdns-lite.txt")
+    assert "deep.ads.example.com" in body(out_dir / "mosdns" / "lite.txt")
+    assert "track.example.com" not in body(out_dir / "mosdns" / "lite.txt")
 
 
 def test_outputs_are_byte_identical_across_runs(tmp_path):
@@ -190,7 +195,7 @@ def test_manifest_records_previous_counts(tmp_path):
 def test_sentinel_rejects_implausible_shrink(tmp_path):
     previous = tmp_path / "previous.json"
     previous.write_text(
-        json.dumps({"outputs": [{"file": "mosdns-lite.txt", "count": 100}]}),
+        json.dumps({"outputs": [{"file": "mosdns/lite.txt", "count": 100}]}),
         encoding="utf-8",
     )
     with pytest.raises(SentinelError):
@@ -208,4 +213,4 @@ def test_failed_source_does_not_abort_build(tmp_path):
     )
     statuses = {s["name"]: s["status"] for s in manifest["sources"]}
     assert statuses["broken-source"] == "failed"
-    assert body(out_dir / "mosdns-lite.txt") == ["ads.example.com"]
+    assert body(out_dir / "mosdns" / "lite.txt") == ["ads.example.com"]

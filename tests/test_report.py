@@ -11,10 +11,10 @@ def test_summary_lists_sources_outputs_and_failures():
             {"name": "bad-source", "status": "failed", "entries": 0, "excluded": 0,
              "bytes": 0, "duration_ms": 1},
         ],
-        "outputs": [{"file": "mosdns-lite.txt", "count": 3, "previous": 4}],
+        "outputs": [{"file": "mosdns/lite.txt", "count": 3, "previous": 4}],
     }
     summary = render_summary(manifest)
     assert "ok-source" in summary
     assert "bad-source" in summary
-    assert "mosdns-lite.txt" in summary
+    assert "mosdns/lite.txt" in summary
     assert "失败源" in summary

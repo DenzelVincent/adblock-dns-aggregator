@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-# 文件名带格式前缀：mosdns 按 URL basename 落地，同名会互相覆盖（见设计 5.7）
+# 按软件分目录：mosdns 按 URL basename 落地，各档 basename 不同，互不覆盖（见设计 5.7）
 FORMATS: dict[str, tuple[str, str, object]] = {
     "mosdns": ("txt", "#", lambda domain: domain),
     "adguard": ("txt", "!", lambda domain: f"||{domain}^"),
@@ -43,9 +43,12 @@ def write_all(
     outputs: list[dict] = []
     for tier, domains in tier_domains.items():
         for fmt, (extension, _, _) in FORMATS.items():
-            name = f"{fmt}-{tier}.{extension}"
+            # 按软件分目录：各客户端的同名档位文件互不覆盖
+            relative = f"{fmt}/{tier}.{extension}"
+            path = out_dir / fmt / f"{tier}.{extension}"
+            path.parent.mkdir(parents=True, exist_ok=True)
             text = render(fmt, domains, tier, generated_at, fold, summaries[tier])
             # 二进制写入：Windows 下避免 text 模式把 \n 变成 \r\n
-            (out_dir / name).write_bytes(text.encode("utf-8"))
-            outputs.append({"file": name, "count": len(domains)})
+            path.write_bytes(text.encode("utf-8"))
+            outputs.append({"file": relative, "count": len(domains)})
     return outputs

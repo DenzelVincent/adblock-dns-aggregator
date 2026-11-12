@@ -2,8 +2,8 @@ name: build
 
 on:
   schedule:
-    # 每日 20:00 UTC（北京 04:00）
-    - cron: "0 20 * * *"
+    # 每周日 20:00 UTC（北京周一 04:00）
+    - cron: "0 20 * * 0"
   workflow_dispatch:
     inputs:
       fold:

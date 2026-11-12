@@ -49,7 +49,7 @@ def test_write_all_creates_sixteen_files(tmp_path):
     outputs = write_all(tmp_path, tiers, GENERATED_AT, True, summaries)
 
     expected = {
-        f"{fmt}-{tier}.{ext}"
+        f"{fmt}/{tier}.{ext}"
         for fmt, ext in (
             ("mosdns", "txt"),
             ("adguard", "txt"),
@@ -58,24 +58,29 @@ def test_write_all_creates_sixteen_files(tmp_path):
         )
         for tier in tiers
     }
-    assert {p.name for p in tmp_path.iterdir()} == expected
+    actual = {
+        path.relative_to(tmp_path).as_posix()
+        for path in tmp_path.rglob("*")
+        if path.is_file()
+    }
+    assert actual == expected
     assert [o["file"] for o in outputs] == [
-        "mosdns-lite.txt",
-        "adguard-lite.txt",
-        "dnsmasq-lite.conf",
-        "smartdns-lite.conf",
-        "mosdns-full.txt",
-        "adguard-full.txt",
-        "dnsmasq-full.conf",
-        "smartdns-full.conf",
-        "mosdns-cn.txt",
-        "adguard-cn.txt",
-        "dnsmasq-cn.conf",
-        "smartdns-cn.conf",
-        "mosdns-mini.txt",
-        "adguard-mini.txt",
-        "dnsmasq-mini.conf",
-        "smartdns-mini.conf",
+        "mosdns/lite.txt",
+        "adguard/lite.txt",
+        "dnsmasq/lite.conf",
+        "smartdns/lite.conf",
+        "mosdns/full.txt",
+        "adguard/full.txt",
+        "dnsmasq/full.conf",
+        "smartdns/full.conf",
+        "mosdns/cn.txt",
+        "adguard/cn.txt",
+        "dnsmasq/cn.conf",
+        "smartdns/cn.conf",
+        "mosdns/mini.txt",
+        "adguard/mini.txt",
+        "dnsmasq/mini.conf",
+        "smartdns/mini.conf",
     ]
     assert outputs[0]["count"] == 1
     assert outputs[4]["count"] == 2
@@ -91,6 +96,6 @@ def test_written_files_use_lf_only(tmp_path):
         True,
         {"lite": SOURCES, "full": SOURCES, "cn": SOURCES, "mini": SOURCES},
     )
-    for path in tmp_path.iterdir():
-        if path.suffix != ".json":
+    for path in tmp_path.rglob("*"):
+        if path.is_file():
             assert b"\r\n" not in path.read_bytes(), path.name

@@ -1,6 +1,6 @@
 # adblock-dns-aggregator
 
-从一手规则源聚合广告/追踪域名，产出 mosdns、AdGuard、dnsmasq、smartdns 四种格式的 lite / full / cn / mini 四档清单，每日由 GitHub Actions 构建并发布到 `output` 分支。
+从一手规则源聚合广告/追踪域名，产出 mosdns、AdGuard、dnsmasq、smartdns 四种格式的 lite / full / cn / mini 四档清单，每周由 GitHub Actions 构建并发布到 `output` 分支。
 
 ## 它解决什么
 
@@ -16,10 +16,10 @@
 
 | 文件 | 格式 |
 |---|---|
-| `mosdns-{mini,cn,lite,full}.txt` | 纯域名，一行一个 |
-| `adguard-{mini,cn,lite,full}.txt` | `\|\|domain^` |
-| `dnsmasq-{mini,cn,lite,full}.conf` | `address=/domain/0.0.0.0` |
-| `smartdns-{mini,cn,lite,full}.conf` | `address /domain/#` |
+| `mosdns/{mini,cn,lite,full}.txt` | 纯域名，一行一个 |
+| `adguard/{mini,cn,lite,full}.txt` | `\|\|domain^` |
+| `dnsmasq/{mini,cn,lite,full}.conf` | `address=/domain/0.0.0.0` |
+| `smartdns/{mini,cn,lite,full}.conf` | `address /domain/#` |
 | `manifest.json` | 生成时间、各源状态与条数、折叠前后条数、sha256 |
 
 档位含义（按条数从小到大）：
@@ -31,7 +31,7 @@
 
 国内/国外按**源**划分而不是逐个域名判定：广告域名多挂在 `.com` 或 CDN 下，用 TLD 或社区中国域名表归类误差很大；源级拆分是近似，但可解释、可维护。`cn` 档里仍会混有少量国外广告域名。
 
-产物文件名带格式前缀，因为 mosdns 按 URL 的 basename 落地规则文件，同名会互相覆盖。
+产物按软件分目录，各客户端只取自己目录下的文件；同一路由只订阅一个档位，多档叠加会重复加载。
 
 ## 使用方式
 
@@ -39,22 +39,22 @@
 
 ```text
 # mosdns（ad_source 填 URL）
-https://raw.githubusercontent.com/DenzelVincent/adblock-dns-aggregator/output/mosdns-lite.txt
+https://raw.githubusercontent.com/DenzelVincent/adblock-dns-aggregator/output/mosdns/lite.txt
 
 # 国内用户只订国内源
-https://raw.githubusercontent.com/DenzelVincent/adblock-dns-aggregator/output/mosdns-cn.txt
+https://raw.githubusercontent.com/DenzelVincent/adblock-dns-aggregator/output/mosdns/cn.txt
 
 # 内存紧张时用 mini 档
-https://raw.githubusercontent.com/DenzelVincent/adblock-dns-aggregator/output/mosdns-mini.txt
+https://raw.githubusercontent.com/DenzelVincent/adblock-dns-aggregator/output/mosdns/mini.txt
 
 # 走 gh-proxy 时在地址前加 https://gh-proxy.com/
 ```
 
-- **AdGuard Home**：订阅 `https://raw.githubusercontent.com/DenzelVincent/adblock-dns-aggregator/output/adguard-full.txt`
-- **dnsmasq**：`conf-file=` 指向 `dnsmasq-lite.conf`
-- **smartdns**：`conf-file` 指向 `smartdns-lite.conf`
+- **AdGuard Home**：订阅 `https://raw.githubusercontent.com/DenzelVincent/adblock-dns-aggregator/output/adguard/full.txt`
+- **dnsmasq**：`conf-file=` 指向 `dnsmasq/lite.conf`
+- **smartdns**：`conf-file` 指向 `smartdns/lite.conf`
 
-> mosdns 的 `update_adlist` 在任一 URL 下载失败时会整轮放弃，且按 basename 落地，同一份清单不要同时加两个格式文件。
+> mosdns 的 `update_adlist` 在任一 URL 下载失败时会整轮放弃，同一路由只加一个档位的 URL。
 
 ## 配置
 
@@ -93,7 +93,7 @@ python -m aggregator --out dist --no-fold
 
 ## 构建流程
 
-GitHub Actions 每日 20:00 UTC（北京 04:00）触发：
+GitHub Actions 每周日 20:00 UTC（北京周一 04:00）触发：
 
 1. 跑 pytest，失败则不构建；
 2. 下载所有源，单源失败只记录不中断；解析出 0 条视同失败；
