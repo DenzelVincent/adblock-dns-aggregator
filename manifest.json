@@ -1,0 +1,150 @@
+{
+  "generated_at": "2026-11-24T08:58:13Z",
+  "fold": true,
+  "sources": [
+    {
+      "name": "anti-AD",
+      "status": "ok",
+      "entries": 110923,
+      "excluded": 0,
+      "bytes": 2135106,
+      "sha256": "e85bc961a5168433c16a79f3a68658559c2f3c656a0015cc3fbcfada3ccb3438",
+      "duration_ms": 548
+    },
+    {
+      "name": "AWAvenue-Ads-Rule",
+      "status": "ok",
+      "entries": 978,
+      "excluded": 0,
+      "bytes": 23771,
+      "sha256": "9c7204be5180e33ed97d2f7b8dc9fc1b61e6aabdaafa149ed9165636294f7f7b",
+      "duration_ms": 255
+    },
+    {
+      "name": "AdGuard-Chinese",
+      "status": "ok",
+      "entries": 5739,
+      "excluded": 258,
+      "bytes": 733074,
+      "sha256": "e55aa4f170daffae7e764d32302c24fc49ac833501f2a54720a77f40d3e27f05",
+      "duration_ms": 2015
+    },
+    {
+      "name": "hagezi-light",
+      "status": "ok",
+      "entries": 76665,
+      "excluded": 0,
+      "bytes": 1932639,
+      "sha256": "e75d017b22b182a0029eaf6486d44a285d7ff5a0e9e0e82d934a6f8f70e11dbf",
+      "duration_ms": 138
+    },
+    {
+      "name": "hagezi-pro",
+      "status": "ok",
+      "entries": 239389,
+      "excluded": 0,
+      "bytes": 5587622,
+      "sha256": "f9e033679e7bdf22486558f59e83a5aaeb2cb8ee7fc897f279c8e506b07edf24",
+      "duration_ms": 123
+    },
+    {
+      "name": "Cats-Team-AdRules",
+      "status": "ok",
+      "entries": 214256,
+      "excluded": 0,
+      "bytes": 6003081,
+      "sha256": "c1db6a00d87eb42607419e017d20ec688067110584877789778310125e7f45bc",
+      "duration_ms": 567
+    }
+  ],
+  "whitelist_extra": [
+    {
+      "name": "trackerslist",
+      "status": "ok",
+      "domains": 116,
+      "duration_ms": 126
+    }
+  ],
+  "outputs": [
+    {
+      "file": "mosdns/lite.txt",
+      "count": 148622,
+      "previous": 148622
+    },
+    {
+      "file": "adguard/lite.txt",
+      "count": 148622,
+      "previous": 148622
+    },
+    {
+      "file": "dnsmasq/lite.conf",
+      "count": 148622,
+      "previous": 148622
+    },
+    {
+      "file": "smartdns/lite.conf",
+      "count": 148622,
+      "previous": 148622
+    },
+    {
+      "file": "mosdns/full.txt",
+      "count": 359932,
+      "previous": 359932
+    },
+    {
+      "file": "adguard/full.txt",
+      "count": 359932,
+      "previous": 359932
+    },
+    {
+      "file": "dnsmasq/full.conf",
+      "count": 359932,
+      "previous": 359932
+    },
+    {
+      "file": "smartdns/full.conf",
+      "count": 359932,
+      "previous": 359932
+    },
+    {
+      "file": "mosdns/cn.txt",
+      "count": 103298,
+      "previous": 103298
+    },
+    {
+      "file": "adguard/cn.txt",
+      "count": 103298,
+      "previous": 103298
+    },
+    {
+      "file": "dnsmasq/cn.conf",
+      "count": 103298,
+      "previous": 103298
+    },
+    {
+      "file": "smartdns/cn.conf",
+      "count": 103298,
+      "previous": 103298
+    },
+    {
+      "file": "mosdns/mini.txt",
+      "count": 6603,
+      "previous": 6603
+    },
+    {
+      "file": "adguard/mini.txt",
+      "count": 6603,
+      "previous": 6603
+    },
+    {
+      "file": "dnsmasq/mini.conf",
+      "count": 6603,
+      "previous": 6603
+    },
+    {
+      "file": "smartdns/mini.conf",
+      "count": 6603,
+      "previous": 6603
+    }
+  ]
+}
