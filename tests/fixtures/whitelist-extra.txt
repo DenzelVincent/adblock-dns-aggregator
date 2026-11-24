@@ -1,0 +1,9 @@
+http://tracker.example.org:6969/announce
+
+http://192.168.1.1:80/announce
+udp://tracker.example.net:1337/announce
+
+https://opentracker.example.com:443/announce
+wss://tracker.websocket.example.io:443/announce
+http://[2001:db8::1]:80/announce
+https://例子.测试/announce

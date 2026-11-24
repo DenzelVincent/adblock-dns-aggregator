@@ -6,6 +6,12 @@ concurrency: 4
 timeout: 30
 retries: 3
 
+# 白名单补充源：每次构建自动拉取并并入 whitelist.txt，单源失败只记录并跳过。
+# 目前用于 BT / PT 下载器要连的 tracker，被拦会直接掉速。
+whitelist_extra:
+  - name: trackerslist
+    url: https://cf.trackerslist.com/all.txt
+
 # 哨兵：任一产物条数低于上一版的该比例即判构建失败，禁止发布
 sentinel:
   min_retain_ratio: 0.8

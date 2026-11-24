@@ -18,3 +18,20 @@ def test_summary_lists_sources_outputs_and_failures():
     assert "bad-source" in summary
     assert "mosdns/lite.txt" in summary
     assert "失败源" in summary
+
+
+def test_summary_renders_whitelist_extra():
+    manifest = {
+        "generated_at": "2026-11-12T20:00:00Z",
+        "fold": True,
+        "sources": [],
+        "whitelist_extra": [
+            {"name": "trackerslist", "status": "ok", "domains": 116},
+            {"name": "broken", "status": "failed", "domains": 0},
+        ],
+        "outputs": [],
+    }
+    summary = render_summary(manifest)
+    assert "trackerslist" in summary
+    assert "| 116 |" in summary
+    assert "失败补充源：broken" in summary

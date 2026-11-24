@@ -1,5 +1,16 @@
 # 手工放行清单：一行一个域名，后缀匹配，自动覆盖其子域。
 # 白名单始终先于父域折叠生效，且不受 fold 开关影响。
+# 放行 = 从拦截集里连同祖先与子孙一并剔除，宁可漏拦不可误杀。
 
-# 示例（按需取消注释）：
-# analytics.example.com
+# 迅雷：下载、加速与播放/资源域；广告与遥测子域继续拦。
+stat.download.xunlei.com
+watch.advertising.speed.cdn.vip.xunlei.com
+scene.vip.xunlei.com
+upgrade.xl9.xunlei.com
+dm.xiazaibao.xunlei.com
+material.xl7.xunlei.com
+kkpgv2.xunlei.com
+record.kuai.xunlei.com
+
+# BT / PT 下载器要连的 tracker 不在这里维护：
+# 每次构建从 https://cf.trackerslist.com/all.txt 自动拉取并并入白名单。

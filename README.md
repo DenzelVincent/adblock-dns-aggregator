@@ -58,11 +58,13 @@ https://raw.githubusercontent.com/DenzelVincent/adblock-dns-aggregator/output/mo
 
 ## 配置
 
-- `config.yaml`：折叠开关、并发、超时、重试、哨兵阈值；
+- `config.yaml`：折叠开关、并发、超时、重试、哨兵阈值、白名单补充源；
 - `sources.yaml`：唯一的源事实来源，`license` 必填；
 - `whitelist.txt`：手工放行，一行一个域名，自动覆盖其子域。
 
 白名单始终先于父域折叠生效，且不受 `fold` 开关影响。父域被白名单顶掉后，其下未被白名单覆盖的子域条目若来自其它源，会保留继续生效（宁可漏拦，不可误杀）。
+
+`config.yaml` 的 `whitelist_extra` 声明 URL 型白名单补充源，每次构建自动拉取并抽出主机名并入白名单，单源失败只记录不中断。默认收录 [cf.trackerslist.com](https://cf.trackerslist.com/all.txt) 的 BT / PT tracker —— 这些域名被拦会让下载器连不上 peer，直接掉速，而清单本身看不出异常。`whitelist.txt` 里另外手工放行了迅雷的下载与播放子域（`stat.download`、`scene.vip` 等），广告与遥测子域照常拦截。
 
 ## 默认源
 
@@ -96,10 +98,11 @@ python -m aggregator --out dist --no-fold
 GitHub Actions 每周日 20:00 UTC（北京周一 04:00）触发：
 
 1. 跑 pytest，失败则不构建；
-2. 下载所有源，单源失败只记录不中断；解析出 0 条视同失败；
-3. 生成产物与 `manifest.json`；
-4. 哨兵：任一产物条数低于上一版 80% 即失败，不推送；
-5. 切到 `output` 分支（不存在则建 orphan），单提交强推。强推只作用于该专用分支。
+2. 拉取 `whitelist_extra` 白名单补充源，并与 `whitelist.txt` 合并；
+3. 下载所有规则源，单源失败只记录不中断；解析出 0 条视同失败；
+4. 生成产物与 `manifest.json`（含每个补充源的状态与域名数）；
+5. 哨兵：任一产物条数低于上一版 80% 即失败，不推送；
+6. 切到 `output` 分支（不存在则建 orphan），单提交强推。强推只作用于该专用分支。
 
 手动触发可用 `fold` 入参覆盖当次折叠开关，`default` 回落到 `config.yaml`。
 

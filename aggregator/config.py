@@ -17,12 +17,21 @@ class ConfigError(Exception):
 
 
 @dataclass(frozen=True)
+class ExtraWhitelistSource:
+    """白名单补充源：URL 清单，解析出域名后并入白名单。"""
+
+    name: str
+    url: str
+
+
+@dataclass(frozen=True)
 class Config:
     fold: bool
     concurrency: int
     timeout: float
     retries: int
     min_retain_ratio: float
+    whitelist_extra: tuple[ExtraWhitelistSource, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -75,12 +84,26 @@ def load_config(path: Path) -> Config:
     if not isinstance(ratio, (int, float)) or isinstance(ratio, bool) or not 0 < ratio <= 1:
         raise ConfigError("sentinel.min_retain_ratio 必须在 (0, 1] 区间")
 
+    extra_raw = data.get("whitelist_extra") or []
+    if not isinstance(extra_raw, list):
+        raise ConfigError("whitelist_extra 必须是列表")
+    extra: list[ExtraWhitelistSource] = []
+    for index, item in enumerate(extra_raw, start=1):
+        if not isinstance(item, dict):
+            raise ConfigError(f"whitelist_extra 第 {index} 项必须是映射")
+        name = str(item.get("name") or "").strip()
+        url = str(item.get("url") or "").strip()
+        if not name or not url:
+            raise ConfigError(f"whitelist_extra 第 {index} 项缺少 name 或 url")
+        extra.append(ExtraWhitelistSource(name=name, url=url))
+
     return Config(
         fold=fold,
         concurrency=concurrency,
         timeout=timeout,
         retries=retries,
         min_retain_ratio=float(ratio),
+        whitelist_extra=tuple(extra),
     )
 
 

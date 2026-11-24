@@ -11,7 +11,7 @@ from pathlib import Path
 
 from .config import ConfigError, load_config, load_sources, load_whitelist
 from .emit import write_all
-from .fetch import fetch_all
+from .fetch import fetch_all, fetch_whitelist_extra
 from .fold import resolve
 from .parse import parse_source
 
@@ -45,6 +45,10 @@ def run(
     config = load_config(config_path)
     sources = [source for source in load_sources(sources_path) if source.enabled]
     whitelist = load_whitelist(whitelist_path)
+    extra_domains, extra_records = fetch_whitelist_extra(config.whitelist_extra, config)
+    whitelist |= extra_domains
+    if extra_domains:
+        logger.info("白名单补充源合计 %d 个域名", len(extra_domains))
 
     results = fetch_all(sources, config)
     if sources and not any(result.status == "ok" for result in results):
@@ -122,6 +126,7 @@ def run(
         "generated_at": generated,
         "fold": fold_enabled,
         "sources": source_records,
+        "whitelist_extra": extra_records,
         "outputs": outputs,
     }
     (out_dir / "manifest.json").write_bytes(

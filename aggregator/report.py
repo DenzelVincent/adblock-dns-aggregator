@@ -42,6 +42,21 @@ def render_summary(manifest: dict) -> str:
     failed = [source["name"] for source in manifest["sources"] if source["status"] != "ok"]
     if failed:
         lines += ["", f"失败源：{', '.join(failed)}"]
+
+    extra = manifest.get("whitelist_extra") or []
+    if extra:
+        lines += [
+            "",
+            "### 白名单补充源",
+            "",
+            "| 源 | 状态 | 域名 |",
+            "|---|---|---|",
+        ]
+        for item in extra:
+            lines.append(f"| {item['name']} | {item['status']} | {item['domains']} |")
+        extra_failed = [item["name"] for item in extra if item["status"] != "ok"]
+        if extra_failed:
+            lines += ["", f"失败补充源：{', '.join(extra_failed)}"]
     return "\n".join(lines) + "\n"
 
 
