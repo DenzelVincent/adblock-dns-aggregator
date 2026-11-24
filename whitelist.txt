@@ -28,7 +28,9 @@ hub5u.sandai.net
 hub5p.sandai.net
 hub5pr.sandai.net
 hub5pnc.sandai.net
+hub5pn.sandai.net
 hub5pn.wap.sandai.net
+hub5pn.v6.sandai.net
 hub5idx.shub.sandai.net
 btrouter.sandai.net
 dphub.sandai.net
