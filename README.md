@@ -64,7 +64,7 @@ https://raw.githubusercontent.com/DenzelVincent/adblock-dns-aggregator/output/mo
 
 白名单始终先于父域折叠生效，且不受 `fold` 开关影响。父域被白名单顶掉后，其下未被白名单覆盖的子域条目若来自其它源，会保留继续生效（宁可漏拦，不可误杀）。
 
-`config.yaml` 的 `whitelist_extra` 声明 URL 型白名单补充源，每次构建自动拉取并抽出主机名并入白名单，单源失败只记录不中断。默认收录 [cf.trackerslist.com](https://cf.trackerslist.com/all.txt) 的 BT / PT tracker —— 这些域名被拦会让下载器连不上 peer，直接掉速，而清单本身看不出异常。`whitelist.txt` 里另外手工放行了迅雷的下载与播放子域（`stat.download`、`scene.vip` 等），广告与遥测子域照常拦截。
+`config.yaml` 的 `whitelist_extra` 声明 URL 型白名单补充源，每次构建自动拉取并抽出主机名并入白名单，单源失败只记录不中断。默认收录 [cf.trackerslist.com](https://cf.trackerslist.com/all.txt) 的 BT / PT tracker —— 这些域名被拦会让下载器连不上 peer，直接掉速，而清单本身看不出异常。`whitelist.txt` 另外手工放行了迅雷的下载/播放子域、会员接口与 P2P 加速 hub（`hub5*.sandai.net`、`dphub.sandai.net` 等）；迅雷的广告、统计与遥测子域照常拦截。
 
 ## 默认源
 

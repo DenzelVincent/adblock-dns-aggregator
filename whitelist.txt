@@ -2,7 +2,10 @@
 # 白名单始终先于父域折叠生效，且不受 fold 开关影响。
 # 放行 = 从拦截集里连同祖先与子孙一并剔除，宁可漏拦不可误杀。
 
-# 迅雷：下载、加速与播放/资源域；广告与遥测子域继续拦。
+# 迅雷（会员）：下载、P2P 加速、会员接口与播放/资源域；
+# 广告、统计与遥测子域继续拦。
+
+# 下载与播放链路
 stat.download.xunlei.com
 watch.advertising.speed.cdn.vip.xunlei.com
 scene.vip.xunlei.com
@@ -11,6 +14,32 @@ dm.xiazaibao.xunlei.com
 material.xl7.xunlei.com
 kkpgv2.xunlei.com
 record.kuai.xunlei.com
+
+# 会员与账号接口（拦了会影响登录、会员加速与远程下载入口）
+api-shoulei-ssl.xunlei.com
+api-u-ssl.xunlei.com
+soa-vip-ssl.xunlei.com
+
+# P2P 加速 hub 族（BT/eMule 节点、索引与调度）
+hub5btmain.sandai.net
+hub5emu.sandai.net
+hub5c.sandai.net
+hub5u.sandai.net
+hub5p.sandai.net
+hub5pr.sandai.net
+hub5pnc.sandai.net
+hub5pn.wap.sandai.net
+hub5idx.shub.sandai.net
+btrouter.sandai.net
+dphub.sandai.net
+hub.sandai.net
+dlresctrl.phub.sandai.net
+
+# 客户端业务接口与配置下发、端口映射
+biz4.sandai.net
+biz5.sandai.net
+mcfg.sandai.net
+pmap.sandai.net
 
 # BT / PT 下载器要连的 tracker 不在这里维护：
 # 每次构建从 https://cf.trackerslist.com/all.txt 自动拉取并并入白名单。

@@ -10,13 +10,19 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 # 这几条断言就是它们的看门人。
 XUNLEI_REQUIRED = {
     "stat.download.xunlei.com",
-    "watch.advertising.speed.cdn.vip.xunlei.com",
     "scene.vip.xunlei.com",
     "upgrade.xl9.xunlei.com",
-    "dm.xiazaibao.xunlei.com",
-    "material.xl7.xunlei.com",
-    "kkpgv2.xunlei.com",
-    "record.kuai.xunlei.com",
+    "api-shoulei-ssl.xunlei.com",
+    "api-u-ssl.xunlei.com",
+    "soa-vip-ssl.xunlei.com",
+    "hub5btmain.sandai.net",
+    "hub5emu.sandai.net",
+    "hub5c.sandai.net",
+    "hub5pnc.sandai.net",
+    "dphub.sandai.net",
+    "hub.sandai.net",
+    "btrouter.sandai.net",
+    "mcfg.sandai.net",
 }
 
 # tracker 域名不写在仓库里，靠 config.yaml 的 whitelist_extra 每次构建拉取；
