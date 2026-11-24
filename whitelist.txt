@@ -45,5 +45,11 @@ pmap.sandai.net
 hubstat.sandai.net
 stat-download-ssl.xunlei.com
 
+# 客户端更新渠道，与广告无关
+liveupdate.mac.sandai.net
+
+# 归属不明的 .it 域名，不在迅雷官方域名体系内，按上游收录噪音放行
+xunlei.it
+
 # BT / PT 下载器要连的 tracker 不在这里维护：
 # 每次构建从 https://cf.trackerslist.com/all.txt 自动拉取并并入白名单。

@@ -25,6 +25,8 @@ XUNLEI_REQUIRED = {
     "mcfg.sandai.net",
     "hubstat.sandai.net",
     "stat-download-ssl.xunlei.com",
+    "liveupdate.mac.sandai.net",
+    "xunlei.it",
 }
 
 # tracker 域名不写在仓库里，靠 config.yaml 的 whitelist_extra 每次构建拉取；
