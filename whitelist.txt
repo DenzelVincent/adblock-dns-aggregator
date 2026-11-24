@@ -41,5 +41,9 @@ biz5.sandai.net
 mcfg.sandai.net
 pmap.sandai.net
 
+# 统计域名里与下载链路或 hub 调度可能有牵连的两条，宁放行不冒险
+hubstat.sandai.net
+stat-download-ssl.xunlei.com
+
 # BT / PT 下载器要连的 tracker 不在这里维护：
 # 每次构建从 https://cf.trackerslist.com/all.txt 自动拉取并并入白名单。
