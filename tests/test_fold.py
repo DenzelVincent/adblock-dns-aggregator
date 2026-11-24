@@ -33,6 +33,19 @@ def test_fold_keeps_siblings_with_shared_prefix():
     assert fold_domains(["b.com", "bx.com"]) == ["b.com", "bx.com"]
 
 
+def test_fold_sees_past_hyphen_sibling_to_descendant():
+    # b-c.com 的反转串 com.b-c 插在 com.b 与 com.b.a 之间，按上一条比较会漏判
+    assert fold_domains(["b.com", "b-c.com", "a.b.com"]) == ["b.com", "b-c.com"]
+    assert fold_domains(
+        ["adjust.com", "adjust-cn.com", "app.adjust.com", "s2s.adjust.com"]
+    ) == ["adjust.com", "adjust-cn.com"]
+
+
+def test_fold_drops_deep_descendant_with_many_siblings():
+    domains = ["a.com", "a-b.com", "a-c.com", "x.y.z.a.com", "b.a.com"]
+    assert fold_domains(domains) == ["a.com", "a-b.com", "a-c.com"]
+
+
 def test_fold_respects_label_boundary():
     assert fold_domains(["b.com", "c.b.com", "b.com.evil.org"]) == [
         "b.com",

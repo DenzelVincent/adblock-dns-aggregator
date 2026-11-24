@@ -48,15 +48,21 @@ def _ordered(domains: Iterable[str]) -> list[str]:
 
 
 def fold_domains(domains: Iterable[str]) -> list[str]:
-    """父域折叠：按反转标签升序单遍扫描，祖先一定紧邻在子孙之前。"""
+    """父域折叠：按反转标签升序单遍扫描，祖先一定在子孙之前出现。
+
+    但不能只跟"上一条保留项"比较：兄弟域 `b-c.com` 反转成 `com.b-c`，
+    连字符排在点号之前，会插在 `b.com` 与 `a.b.com` 之间，上一条比较就会
+    漏掉 `com.b.a`。因此改为维护已保留项集合，按标签边界查前缀。
+    """
     ordered = sorted({_reverse_labels(domain) for domain in domains})
     kept: list[str] = []
-    last: str | None = None
+    kept_set: set[str] = set()
     for reversed_domain in ordered:
-        if last is not None and reversed_domain.startswith(f"{last}."):
+        labels = reversed_domain.split(".")
+        if any(".".join(labels[:index]) in kept_set for index in range(1, len(labels))):
             continue
         kept.append(reversed_domain)
-        last = reversed_domain
+        kept_set.add(reversed_domain)
     return [".".join(reversed(item.split("."))) for item in kept]
 
 
